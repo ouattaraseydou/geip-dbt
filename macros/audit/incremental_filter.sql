@@ -19,25 +19,7 @@ PARAMETERS :
 
 RETURNS :
 Bloc WHERE exécuté uniquement lors d'un chargement incrémental.
-
-EXAMPLE :
-
-{{ incremental_filter('CREATED_AT', 'INVOICE_CREATED_AT') }}
-
-Compile en :
-
-{% raw %}
-{% if is_incremental() %}
-
-WHERE CREATED_AT >
-
-(
-    SELECT COALESCE(MAX(INVOICE_CREATED_AT), '1900-01-01')
-    FROM {{ this }}
-)
-
-{% endif %}
-{% endraw %}
+---
 
 AUTHOR :
 Ouattara Seydou
@@ -46,18 +28,17 @@ Ouattara Seydou
 
 {% macro incremental_filter(source_column, target_column) %}
 
-{% if is_incremental() %}
+    {% if is_incremental() %}
 
-WHERE {{ source_column }} >
+        WHERE {{ source_column }} >
+        (
+            SELECT COALESCE(
+                MAX({{ target_column }}),
+                '1900-01-01'
+            )
+            FROM {{ this }}
+        )
 
-(
-
-    SELECT COALESCE(MAX({{ target_column }}), '1900-01-01')
-
-    FROM {{ this }}
-
-)
-
-{% endif %}
+    {% endif %}
 
 {% endmacro %}
