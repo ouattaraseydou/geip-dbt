@@ -1,0 +1,59 @@
+version: 2
+
+models:
+  - name: stg_landing_customers
+    description: >
+      ==========================================================================
+      STAGING MODEL : STG_LANDING_CUSTOMERS
+      --------------------------------------------------------------------------
+      Ce modèle prépare les données des clients provenant de la couche Landing.
+
+      Les traitements réalisés sont :
+        • suppression des doublons
+        • nettoyage des champs texte
+        • standardisation des valeurs
+        • conversion des dates
+        • conservation de la version la plus récente
+
+      Aucune logique métier n'est appliquée à cette étape.
+
+      Cette table constitue la source des modèles Silver.
+      ==========================================================================
+
+    columns:
+
+      ##########################################################################
+      # Clés
+      ##########################################################################
+
+      - name: customer_sk
+        description: Clé technique unique du client.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: customer_id
+        description: Identifiant métier unique du client.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: customer_code
+        description: Code fonctionnel du client.
+
+      ##########################################################################
+      # Informations client
+      ##########################################################################
+
+      - name: email
+        description: Adresse e-mail principale du client.
+
+      - name: status
+        description: Statut actuel du client.
+
+      ##########################################################################
+      # Audit
+      ##########################################################################
+
+      - name: load_date
+        description: Date de chargement des données dans Snowflake.

@@ -1,0 +1,159 @@
+version: 2
+
+models:
+  - name: stg_landing_energy_consumption
+    description: >
+      ==========================================================================
+      STAGING MODEL : STG_LANDING_ENERGY_CONSUMPTION
+      --------------------------------------------------------------------------
+      Ce modèle prépare les relevés de consommation énergétique provenant de la
+      couche Landing.
+
+      Les traitements réalisés sont :
+        • nettoyage des champs texte
+        • standardisation des valeurs
+        • conversion des dates
+        • conversion des valeurs numériques
+        • création d'indicateurs techniques
+
+      Aucune logique métier complexe n'est appliquée à cette étape.
+
+      Cette table constitue la source des modèles Silver.
+      ==========================================================================
+
+    columns:
+
+      ##########################################################################
+      # Clés
+      ##########################################################################
+
+      - name: consumption_sk
+        description: Clé technique unique du relevé.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: meter_id
+        description: Identifiant métier du compteur.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_landing_meters')
+                field: meter_id
+
+      - name: contract_id
+        description: Identifiant métier du contrat.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_landing_contracts')
+                field: contract_id
+
+      ##########################################################################
+      # Date de lecture
+      ##########################################################################
+
+      - name: reading_datetime
+        description: Date et heure du relevé.
+        data_tests:
+          - not_null
+
+      - name: reading_year
+        description: Année du relevé.
+
+      - name: reading_month
+        description: Mois du relevé.
+
+      - name: reading_day
+        description: Jour du relevé.
+
+      - name: reading_hour
+        description: Heure du relevé.
+
+      - name: season
+        description: Saison correspondant au relevé.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - SPRING
+                  - SUMMER
+                  - AUTUMN
+                  - WINTER
+
+      ##########################################################################
+      # Mesures de consommation
+      ##########################################################################
+
+      - name: energy_consumed_kwh
+        description: Énergie totale consommée (kWh).
+
+      - name: peak_kwh
+        description: Consommation durant les heures pleines.
+
+      - name: off_peak_kwh
+        description: Consommation durant les heures creuses.
+
+      - name: reactive_energy_kvarh
+        description: Énergie réactive consommée.
+
+      ##########################################################################
+      # Mesures électriques
+      ##########################################################################
+
+      - name: voltage
+        description: Tension mesurée.
+
+      - name: electric_current
+        description: Intensité électrique.
+
+      - name: power_factor
+        description: Facteur de puissance.
+
+      - name: temperature
+        description: Température mesurée.
+
+      - name: co2_emission_kg
+        description: Émissions estimées de CO₂.
+
+      - name: outage_minutes
+        description: Durée des coupures réseau.
+
+      ##########################################################################
+      # Qualité des données
+      ##########################################################################
+
+      - name: estimated_reading
+        description: Indique si le relevé est estimé.
+
+      - name: quality_flag
+        description: Qualité du relevé.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - GOOD
+                  - ESTIMATED
+                  - MISSING
+
+      ##########################################################################
+      # Audit
+      ##########################################################################
+
+      - name: created_at
+        description: Date de création dans le système source.
+
+      ##########################################################################
+      # Colonnes calculées par dbt
+      ##########################################################################
+
+      - name: reading_type
+        description: Type de relevé (Actual ou Estimated).
+
+      - name: has_consumption
+        description: Indique si une consommation est enregistrée.
+
+      - name: dbt_loaded_at
+        description: Date et heure de chargement du modèle.

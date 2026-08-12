@@ -1,0 +1,136 @@
+version: 2
+
+models:
+  - name: stg_landing_outages
+    description: >
+      ==========================================================================
+      STAGING MODEL : STG_LANDING_OUTAGES
+      --------------------------------------------------------------------------
+      Ce modèle prépare les données des pannes réseau provenant de la couche
+      Landing.
+
+      Les traitements réalisés sont :
+        • nettoyage des champs texte
+        • standardisation des valeurs
+        • conversion des dates
+        • conversion des valeurs numériques
+        • création d'indicateurs techniques
+
+      Aucune logique métier complexe n'est appliquée à cette étape.
+
+      Cette table constitue la source des modèles Silver.
+      ==========================================================================
+
+    columns:
+
+      ##########################################################################
+      # Clés
+      ##########################################################################
+
+      - name: outage_sk
+        description: Clé technique unique de la panne.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: outage_id
+        description: Identifiant métier unique de la panne.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: meter_id
+        description: Identifiant métier du compteur concerné.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_landing_meters')
+                field: meter_id
+
+      - name: contract_id
+        description: Identifiant métier du contrat concerné.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_landing_contracts')
+                field: contract_id
+
+      ##########################################################################
+      # Dates
+      ##########################################################################
+
+      - name: outage_start
+        description: Date et heure de début de la panne.
+
+      - name: outage_end
+        description: Date et heure de fin de la panne.
+
+      ##########################################################################
+      # Informations de la panne
+      ##########################################################################
+
+      - name: duration_minutes
+        description: Durée de la panne en minutes.
+
+      - name: cause
+        description: Cause de la panne.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - UNKNOWN
+                  - EQUIPMENT FAILURE
+                  - TRANSFORMER FAILURE
+                  - CABLE FAULT
+                  - WEATHER
+                  - HUMAN ERROR
+                  - GRID MAINTENANCE
+                  - TREE CONTACT
+
+      - name: severity
+        description: Niveau de gravité.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - LOW
+                  - MEDIUM
+                  - HIGH
+                  - CRITICAL
+
+      - name: status
+        description: Statut actuel de la panne.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - RESOLVED
+                  - IN PROGRESS
+
+      - name: affected_customers
+        description: Nombre de clients impactés.
+
+      ##########################################################################
+      # Colonnes calculées
+      ##########################################################################
+
+      - name: is_resolved
+        description: Indique si la panne est résolue.
+
+      - name: is_major_outage
+        description: Indique si la gravité est HIGH ou CRITICAL.
+
+      - name: duration_hours
+        description: Durée de la panne exprimée en heures.
+
+      - name: is_large_outage
+        description: Indique si au moins 100 clients sont impactés.
+
+      ##########################################################################
+      # Audit
+      ##########################################################################
+
+      - name: dbt_loaded_at
+        description: Date et heure de chargement du modèle par dbt.

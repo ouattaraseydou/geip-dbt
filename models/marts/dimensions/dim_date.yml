@@ -1,0 +1,90 @@
+version: 2
+
+models:
+
+  # ===========================================================================
+  # DIM_DATE
+  # ===========================================================================
+  #
+  # DESCRIPTION
+  # -----------
+  # Dimension calendrier.
+  #
+  # Cette dimension contient une ligne par jour et fournit tous les
+  # attributs calendaires utilisés par les tables de faits.
+  #
+  # SOURCE
+  # ------
+  # Générée par dbt.
+  #
+  # LAYER
+  # -----
+  # GOLD
+  #
+  # ===========================================================================
+
+  - name: dim_date
+
+    description: >
+      Date dimension.
+      Contains one row per calendar day and provides all calendar
+      attributes used across fact tables.
+
+    columns:
+
+      # =======================================================================
+      # Primary Key
+      # =======================================================================
+
+      - name: date_sk
+        description: Surrogate key representing the calendar date.
+
+        data_tests:
+          - not_null
+          - unique
+
+      # =======================================================================
+      # Calendar Date
+      # =======================================================================
+
+      - name: full_date
+        description: Calendar date.
+
+        data_tests:
+          - not_null
+          - unique
+
+      # =======================================================================
+      # Calendar Attributes
+      # =======================================================================
+
+      - name: year
+        description: Calendar year.
+
+      - name: quarter
+        description: Calendar quarter (1 to 4).
+
+      - name: month
+        description: Calendar month number.
+
+      - name: month_name
+        description: Calendar month name.
+
+      - name: week_of_year
+        description: ISO week number.
+
+      - name: day
+        description: Day of the month.
+
+      - name: day_of_week
+        description: Day number within the week.
+
+      - name: day_name
+        description: Name of the day.
+
+      # =======================================================================
+      # Business Calendar
+      # =======================================================================
+
+      - name: is_weekend
+        description: Indicates whether the date falls on a weekend.

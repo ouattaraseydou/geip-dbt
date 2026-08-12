@@ -1,0 +1,615 @@
+version: 2
+
+models:
+
+  # ===========================================================================
+  # FACT_ENERGY_CONSUMPTION
+  # ===========================================================================
+  #
+  # DESCRIPTION
+  # -----------
+  # Table de faits des consommations énergétiques.
+  #
+  # Une ligne représente un relevé de consommation d'énergie provenant
+  # d'un compteur à une date donnée.
+  #
+  # LAYER
+  # -----
+  # GOLD
+  #
+  # ===========================================================================
+
+  - name: fact_energy_consumption
+
+    description: >
+      Fact table containing one record per energy consumption reading.
+
+    columns:
+
+      # =======================================================================
+      # Keys
+      # =======================================================================
+
+      - name: consumption_sk
+        description: Surrogate key of the consumption reading.
+
+        data_tests:
+          - not_null
+          - unique
+
+      - name: customer_sk
+        description: Surrogate key of the customer.
+
+        data_tests:
+          - not_null
+
+      - name: contract_sk
+        description: Surrogate key of the contract.
+
+        data_tests:
+          - not_null
+
+      - name: meter_sk
+        description: Surrogate key of the meter.
+
+        data_tests:
+          - not_null
+
+      - name: reading_date_sk
+        description: Surrogate key of the reading date.
+
+        data_tests:
+          - not_null
+
+      # =======================================================================
+      # Measures
+      # =======================================================================
+
+      - name: energy_consumed_kwh
+        description: Total energy consumed (kWh).
+
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: peak_kwh
+        description: Consumption during peak hours.
+
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: off_peak_kwh
+        description: Consumption during off-peak hours.
+
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: quality_flag
+        description: Reading quality indicator.
+
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - GOOD
+                  - ESTIMATED
+                  - MISSING
+
+  # ===========================================================================
+  # FACT_INVOICES
+  # ===========================================================================
+  #
+  # DESCRIPTION
+  # -----------
+  # Table de faits des factures.
+  #
+  # Une ligne représente une facture émise.
+  #
+  # ===========================================================================
+
+  - name: fact_invoices
+
+    description: >
+      Fact table containing one record per invoice.
+
+    columns:
+
+      # =======================================================================
+      # Keys
+      # =======================================================================
+
+      - name: invoice_sk
+        description: Surrogate key of the invoice.
+
+        data_tests:
+          - not_null
+          - unique
+
+      - name: customer_sk
+        description: Surrogate key of the customer.
+
+        data_tests:
+          - not_null
+
+      - name: contract_sk
+        description: Surrogate key of the contract.
+
+        data_tests:
+          - not_null
+
+      - name: meter_sk
+        description: Surrogate key of the meter.
+
+        data_tests:
+          - not_null
+
+      - name: invoice_date_sk
+        description: Invoice date surrogate key.
+
+        data_tests:
+          - not_null
+
+      - name: billing_start_date_sk
+        description: Billing period start date.
+
+        data_tests:
+          - not_null
+
+      - name: billing_end_date_sk
+        description: Billing period end date.
+
+        data_tests:
+          - not_null
+
+      - name: due_date_sk
+        description: Payment due date.
+
+        data_tests:
+          - not_null
+
+      - name: payment_date_sk
+        description: Payment date.
+
+      - name: created_date_sk
+        description: Invoice creation date.
+
+        data_tests:
+          - not_null
+
+      # =======================================================================
+      # Measures
+      # =======================================================================
+
+      - name: total_kwh
+        description: Total billed energy.
+
+      - name: energy_amount
+        description: Energy amount.
+
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: fixed_charge
+        description: Fixed subscription amount.
+
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: tax_amount
+        description: Tax amount.
+
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: total_amount
+        description: Invoice total amount.
+
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "> 0"
+
+      # =======================================================================
+      # Status
+      # =======================================================================
+
+      - name: invoice_status
+        description: Current invoice status.
+
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - PAID
+                  - UNPAID
+                  - OVERDUE
+
+      - name: is_paid
+        description: Indicates whether the invoice has been paid.
+
+      - name: payment_terms_days
+        description: Payment terms expressed in days.
+
+      - name: payment_delay_days
+        description: Payment delay in days.
+
+      - name: invoice_created_at
+        description: Invoice creation timestamp.
+
+  # ===========================================================================
+  # FACT_PAYMENTS
+  # ===========================================================================
+  #
+  # DESCRIPTION
+  # -----------
+  # Table de faits des paiements.
+  #
+  # Une ligne représente un paiement effectué par un client.
+  #
+  # ===========================================================================
+
+  - name: fact_payments
+
+    description: >
+      Fact table containing one record per payment transaction.
+
+    columns:
+
+      # =======================================================================
+      # Keys
+      # =======================================================================
+
+      - name: payment_sk
+        description: Surrogate key of the payment.
+
+        data_tests:
+          - not_null
+          - unique
+
+      - name: customer_sk
+        description: Surrogate key of the customer.
+
+        data_tests:
+          - not_null
+
+      - name: contract_sk
+        description: Surrogate key of the contract.
+
+        data_tests:
+          - not_null
+
+      - name: invoice_sk
+        description: Surrogate key of the invoice.
+
+        data_tests:
+          - not_null
+
+      - name: payment_date_sk
+        description: Payment date surrogate key.
+
+        data_tests:
+          - not_null
+
+      - name: created_date_sk
+        description: Creation date surrogate key.
+
+        data_tests:
+          - not_null
+
+      # =======================================================================
+      # Business Keys
+      # =======================================================================
+
+      - name: payment_id
+        description: Business identifier of the payment.
+
+      - name: invoice_id
+        description: Business identifier of the invoice.
+
+      # =======================================================================
+      # Measures
+      # =======================================================================
+
+      - name: amount_paid
+        description: Amount paid.
+
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: total_amount
+        description: Invoice total amount.
+
+      # =======================================================================
+      # Payment Information
+      # =======================================================================
+
+      - name: payment_method
+        description: Payment method used.
+
+      - name: payment_status
+        description: Current payment status.
+
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - SUCCESS
+                  - FAILED
+                  - PENDING
+
+      - name: transaction_reference
+        description: Bank transaction reference.
+
+      - name: bank_name
+        description: Bank name.
+
+      - name: currency
+        description: Currency used for the payment.
+
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - EUR
+
+      # =======================================================================
+      # Indicators
+      # =======================================================================
+
+      - name: is_successful_payment
+        description: Indicates whether the payment was successful.
+
+      - name: is_pending_payment
+        description: Indicates whether the payment is pending.
+
+      - name: is_failed_payment
+        description: Indicates whether the payment failed.
+
+      # =======================================================================
+      # Audit
+      # =======================================================================
+
+      - name: payment_created_at
+        description: Payment creation timestamp.
+
+
+  # ===========================================================================
+  # FACT_OUTAGES
+  # ===========================================================================
+  #
+  # DESCRIPTION
+  # -----------
+  # Table de faits des coupures réseau.
+  #
+  # Une ligne représente une interruption de service sur un compteur
+  # et un contrat à une date donnée.
+  #
+  # Cette table est utilisée pour mesurer :
+  #   • la qualité du réseau
+  #   • la durée des interruptions
+  #   • l'impact sur les clients
+  #   • les indicateurs de performance opérationnelle
+  #
+  # LAYER
+  # -----
+  # GOLD
+  #
+  # ===========================================================================
+
+  - name: fact_outages
+
+    description: >
+      Fact table containing one record per network outage event.
+
+    columns:
+
+      # =======================================================================
+      # Keys
+      # =======================================================================
+
+      - name: outage_sk
+        description: Surrogate key of the outage.
+
+        data_tests:
+          - not_null
+          - unique
+
+      - name: outage_id
+        description: Business identifier of the outage.
+
+      - name: contract_sk
+        description: Surrogate key of the contract.
+
+        data_tests:
+          - not_null
+
+      - name: contract_id
+        description: Business identifier of the contract.
+
+      - name: meter_sk
+        description: Surrogate key of the meter.
+
+        data_tests:
+          - not_null
+
+      - name: meter_id
+        description: Business identifier of the meter.
+
+      # =======================================================================
+      # Date Keys
+      # =======================================================================
+
+      - name: outage_start_date_sk
+        description: Surrogate key of the outage start date.
+
+        data_tests:
+          - not_null
+
+      - name: outage_end_date_sk
+        description: Surrogate key of the outage end date.
+
+      - name: created_date_sk
+        description: Surrogate key of the outage creation date.
+
+        data_tests:
+          - not_null
+
+      # =======================================================================
+      # Business Dates
+      # =======================================================================
+
+      - name: outage_start
+        description: Timestamp when the outage started.
+
+      - name: outage_end
+        description: Timestamp when the outage ended.
+
+      - name: outage_created_at
+        description: Timestamp when the outage was created in the source system.
+
+      # =======================================================================
+      # Outage Information
+      # =======================================================================
+
+      - name: cause
+        description: Cause of the outage.
+
+      - name: severity
+        description: Severity level of the outage.
+
+      - name: status
+        description: Current outage status.
+
+      # =======================================================================
+      # Contract Information
+      # =======================================================================
+
+      - name: contract_type
+        description: Contract type.
+
+      - name: energy_type
+        description: Energy supplied by the contract.
+
+      - name: contract_status
+        description: Current contract status.
+
+      - name: country
+        description: Country where the outage occurred.
+
+      # =======================================================================
+      # Meter Information
+      # =======================================================================
+
+      - name: serial_number
+        description: Meter serial number.
+
+      - name: meter_type
+        description: Meter type.
+
+      - name: manufacturer
+        description: Meter manufacturer.
+
+      - name: meter_status
+        description: Current meter status.
+
+      - name: max_power_kw
+        description: Maximum supported power.
+
+      - name: communication_type
+        description: Meter communication technology.
+
+      # =======================================================================
+      # Measures
+      # =======================================================================
+
+      - name: duration_minutes
+        description: Duration of the outage in minutes.
+
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: duration_hours
+        description: Duration of the outage in hours.
+
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: affected_customers
+        description: Number of impacted customers.
+
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      # =======================================================================
+      # Business Indicators
+      # =======================================================================
+
+      - name: is_resolved
+        description: Indicates whether the outage has been resolved.
+
+      - name: is_major_outage
+        description: Indicates whether the outage is classified as major.
+
+      - name: is_large_outage
+        description: Indicates whether the outage affected a large number of customers.
+
+      - name: is_resolved_status
+        description: TRUE when STATUS = 'RESOLVED'.
+
+      - name: is_critical
+        description: TRUE when SEVERITY = 'CRITICAL'.
+
+      # =======================================================================
+      # Classification
+      # =======================================================================
+
+      - name: duration_category
+        description: Duration category of the outage.
+
+      - name: impact_category
+        description: Customer impact category.
+
+      - name: manufacturer_category
+        description: Manufacturer classification (Premium or Standard).
+
+      - name: power_category
+        description: Power category of the affected installation.
+
+      # =======================================================================
+      # Age Indicators
+      # =======================================================================
+
+      - name: contract_age_days
+        description: Number of days since the contract was created.
+
+      - name: meter_age_days
+        description: Number of days since the meter was created.
+
+      # =======================================================================
+      # Audit
+      # =======================================================================
+
+      - name: contract_created_at
+        description: Contract creation timestamp.
+
+      - name: meter_created_at
+        description: Meter creation timestamp.

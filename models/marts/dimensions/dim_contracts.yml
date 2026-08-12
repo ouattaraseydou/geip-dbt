@@ -1,0 +1,188 @@
+version: 2
+
+models:
+
+  # ===========================================================================
+  # DIM_CONTRACTS
+  # ===========================================================================
+  #
+  # DESCRIPTION
+  # -----------
+  # Dimension des contrats.
+  #
+  # Cette table contient une ligne par contrat et regroupe toutes les
+  # informations descriptives nécessaires aux analyses commerciales,
+  # financières et énergétiques.
+  #
+  # SOURCE
+  # ------
+  # stg_landing_contracts
+  #
+  # LAYER
+  # -----
+  # GOLD
+  #
+  # ===========================================================================
+
+  - name: dim_contracts
+
+    description: >
+      Contract dimension.
+      Contains one record per contract and stores descriptive contract
+      attributes used for reporting and analytics.
+
+    columns:
+
+      # =======================================================================
+      # Keys
+      # =======================================================================
+
+      - name: contract_sk
+        description: Surrogate key of the contract.
+
+        data_tests:
+          - not_null
+          - unique
+
+      - name: contract_id
+        description: Business identifier of the contract.
+
+        data_tests:
+          - not_null
+          - unique
+
+      - name: customer_sk
+        description: Surrogate key of the customer owning the contract.
+
+        data_tests:
+          - not_null
+
+      
+
+      # =======================================================================
+      # Contract Information
+      # =======================================================================
+
+      - name: contract_type
+        description: Type of contract.
+
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - RESIDENTIAL
+                  - BUSINESS
+                  - ENTERPRISE
+
+      - name: energy_type
+        description: Energy supplied by the contract.
+
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - ELECTRICITY
+                  - GAS
+                  - SOLAR
+                  - DUAL
+
+      - name: tariff_name
+        description: Commercial tariff applied to the contract.
+
+      - name: supplier_name
+        description: Energy supplier associated with the contract.
+
+      - name: contract_status
+        description: Current contract status.
+
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - ACTIVE
+                  - SUSPENDED
+                  - TERMINATED
+
+      # =======================================================================
+      # Contract Dates
+      # =======================================================================
+
+      - name: contract_start_date
+        description: Contract start date.
+
+      - name: contract_end_date
+        description: Contract end date.
+
+      - name: contract_created_at
+        description: Contract creation timestamp.
+
+      # =======================================================================
+      # Commercial Information
+      # =======================================================================
+
+      - name: monthly_fee
+        description: Monthly subscription fee.
+
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: estimated_annual_consumption
+        description: Estimated annual energy consumption (kWh).
+
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: renewable_energy
+        description: Indicates whether the contract supplies renewable energy.
+
+      # =======================================================================
+      # Payment Information
+      # =======================================================================
+
+      - name: payment_frequency
+        description: Customer payment frequency.
+
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - MONTHLY
+                  - QUARTERLY 
+                  - YEARLY
+
+      - name: payment_method
+        description: Preferred payment method.
+
+      # =======================================================================
+      # Location
+      # =======================================================================
+
+      - name: contract_country
+        description: Country where the contract is registered.
+
+      # =======================================================================
+      # Audit Information
+      # =======================================================================
+
+      - name: contract_updated_at
+        description: Contract last update timestamp.
+
+      # =======================================================================
+      # Date Keys
+      # =======================================================================
+
+      - name: contract_start_date_sk
+        description: Surrogate key referencing the contract start date in dim_date.
+
+      - name: contract_end_date_sk
+        description: Surrogate key referencing the contract end date in dim_date.
+
+      - name: contract_created_date_sk
+        description: Surrogate key referencing the contract creation date in dim_date.
+
+      - name: contract_updated_date_sk
+        description: Surrogate key referencing the contract last update date in dim_date.

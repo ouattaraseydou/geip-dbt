@@ -1,0 +1,148 @@
+version: 2
+
+models:
+
+  # ===========================================================================
+  # DIM_METERS
+  # ===========================================================================
+  #
+  # DESCRIPTION
+  # -----------
+  # Dimension des compteurs.
+  #
+  # Cette table contient une ligne par compteur et regroupe toutes les
+  # informations techniques, géographiques et fonctionnelles utilisées
+  # dans les analyses énergétiques.
+  #
+  # SOURCE
+  # ------
+  # stg_landing_meters
+  #
+  # LAYER
+  # -----
+  # GOLD
+  #
+  # ===========================================================================
+
+  - name: dim_meters
+
+    description: >
+      Meter dimension.
+      Contains one record per meter and stores descriptive meter
+      attributes used for reporting and analytics.
+
+    columns:
+
+      # =======================================================================
+      # Keys
+      # =======================================================================
+
+      - name: meter_sk
+        description: Surrogate key of the meter.
+
+        data_tests:
+          - not_null
+          - unique
+
+      - name: meter_id
+        description: Business identifier of the meter.
+
+        data_tests:
+          - not_null
+          - unique
+
+      - name: contract_sk
+        description: Surrogate key of the associated contract.
+
+        data_tests:
+          - not_null
+
+      - name: contract_id
+        description: Business identifier of the associated contract.
+
+        data_tests:
+          - not_null
+
+      # =======================================================================
+      # Meter Information
+      # =======================================================================
+
+      - name: serial_number
+        description: Manufacturer serial number of the meter.
+
+      - name: meter_type
+        description: Meter technology.
+
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - SMART
+                  - ANALOG
+                  - DIGITAL
+
+      - name: manufacturer
+        description: Meter manufacturer.
+
+      - name: installation_date
+        description: Meter installation date.
+
+      - name: last_calibration_date
+        description: Date of the last calibration.
+
+      - name: meter_status
+        description: Current operational status of the meter.
+
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - ACTIVE
+                  - FAULTY
+                  - INACTIVE
+
+      # =======================================================================
+      # Technical Characteristics
+      # =======================================================================
+
+      - name: voltage
+        description: Nominal operating voltage.
+
+
+      - name: phase
+        description: Electrical phase configuration.
+
+      - name: max_power_kw
+        description: Maximum supported electrical power (kW).
+
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: communication_type
+        description: Communication technology used by the meter.
+
+      # =======================================================================
+      # Geographic Information
+      # =======================================================================
+
+      - name: country
+        description: Country where the meter is installed.
+
+      - name: latitude
+        description: Geographic latitude.
+
+      - name: longitude
+        description: Geographic longitude.
+
+     
+      # =======================================================================
+      # Audit Information
+      # =======================================================================
+
+      - name: meter_created_at
+        description: Meter creation timestamp.
+
+      - name: meter_updated_at
+        description: Meter last update timestamp.

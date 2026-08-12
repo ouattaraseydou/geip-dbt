@@ -1,0 +1,138 @@
+version: 2
+
+models:
+  - name: stg_landing_maintenance
+    description: >
+      ==========================================================================
+      STAGING MODEL : STG_LANDING_MAINTENANCE
+      --------------------------------------------------------------------------
+      Ce modèle prépare les données des opérations de maintenance provenant de
+      la couche Landing.
+
+      Les traitements réalisés sont :
+        • nettoyage des champs texte
+        • standardisation des valeurs
+        • conversion des dates
+        • conversion des valeurs numériques
+        • création d'indicateurs techniques
+
+      Aucune logique métier complexe n'est appliquée à cette étape.
+
+      Cette table constitue la source des modèles Silver.
+      ==========================================================================
+
+    columns:
+
+      ##########################################################################
+      # Clés
+      ##########################################################################
+
+      - name: maintenance_sk
+        description: Clé technique unique de l'intervention.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: maintenance_id
+        description: Identifiant métier unique de l'intervention.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: meter_id
+        description: Identifiant métier du compteur concerné.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_landing_meters')
+                field: meter_id
+
+      - name: contract_id
+        description: Identifiant métier du contrat concerné.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_landing_contracts')
+                field: contract_id
+
+      ##########################################################################
+      # Informations maintenance
+      ##########################################################################
+
+      - name: maintenance_date
+        description: Date de réalisation de l'intervention.
+
+      - name: maintenance_type
+        description: Type d'intervention réalisée.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - METER REPLACEMENT
+                  - CORRECTIVE
+                  - EMERGENCY REPAIR
+                  - INSPECTION
+                  - CALIBRATION
+                  - PREVENTIVE
+
+      - name: technician
+        description: Nom du technicien ayant réalisé l'intervention.
+
+      - name: priority
+        description: Niveau de priorité.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - LOW
+                  - MEDIUM
+                  - HIGH
+                  - CRITICAL
+
+      - name: status
+        description: Statut de l'intervention.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - COMPLETED
+                  - IN PROGRESS
+                  - CANCELLED
+
+      ##########################################################################
+      # Mesures
+      ##########################################################################
+
+      - name: duration_hours
+        description: Durée de l'intervention en heures.
+
+      - name: maintenance_cost
+        description: Coût de l'intervention.
+
+      - name: result
+        description: Résultat de l'intervention.
+
+      ##########################################################################
+      # Indicateurs calculés
+      ##########################################################################
+
+      - name: is_completed
+        description: Indique si l'intervention est terminée.
+
+      - name: is_high_priority
+        description: Indique si la priorité est HIGH ou CRITICAL.
+
+      - name: is_long_maintenance
+        description: Indique si la durée est supérieure ou égale à 4 heures.
+
+      - name: is_high_cost
+        description: Indique si le coût est supérieur ou égal à 500.
+
+      ##########################################################################
+      # Audit
+      ##########################################################################
+
+      - name: dbt_loaded_at
+        description: Date et heure de chargement du modèle par dbt.

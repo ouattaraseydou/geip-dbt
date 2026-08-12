@@ -1,0 +1,37 @@
+version: 2
+
+sources:
+  - name: landing
+    description: "Données brutes provenant du Data Lake AWS S3"
+
+    database: GEIP_PROD
+    schema: LANDING
+
+    tables:
+
+      - name: CUSTOMERS
+        description: "Clients"
+
+      - name: CONTRACTS
+        description: "Contrats"
+
+      - name: CUSTOMER_SERVICE
+        description: "Interactions avec le service client"
+
+      - name: ENERGY_CONSUMPTION
+        description: "Consommation énergétique"
+
+      - name: INVOICES
+        description: "Factures"
+
+      - name: MAINTENANCE
+        description: "Maintenance des compteurs"
+
+      - name: METERS
+        description: "Compteurs"
+
+      - name: OUTAGES
+        description: "Pannes"
+
+      - name: PAYMENTS
+        description: "Paiements"

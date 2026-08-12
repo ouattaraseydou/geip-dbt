@@ -1,0 +1,118 @@
+version: 2
+
+models:
+  - name: stg_landing_payments
+    description: >
+      ==========================================================================
+      STAGING MODEL : STG_LANDING_PAYMENTS
+      --------------------------------------------------------------------------
+      Ce modèle prépare les données des paiements provenant de la couche Landing.
+
+      Les traitements réalisés sont :
+        • nettoyage des champs texte
+        • standardisation des valeurs
+        • conversion des dates
+        • conversion des montants
+        • création d'indicateurs techniques
+
+      Aucune logique métier complexe n'est appliquée à cette étape.
+
+      Cette table constitue la source des modèles Silver.
+      ==========================================================================
+
+    columns:
+
+      ##########################################################################
+      # Clés
+      ##########################################################################
+
+      - name: payment_sk
+        description: Clé technique unique du paiement.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: payment_id
+        description: Identifiant métier unique du paiement.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: invoice_id
+        description: Identifiant métier de la facture associée.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_landing_invoices')
+                field: invoice_id
+
+      - name: contract_id
+        description: Identifiant métier du contrat associé.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_landing_contracts')
+                field: contract_id
+
+      ##########################################################################
+      # Informations paiement
+      ##########################################################################
+
+      - name: payment_date
+        description: Date du paiement.
+
+      - name: amount_paid
+        description: Montant effectivement payé.
+
+      - name: payment_method
+        description: Mode de paiement utilisé.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - Bank Transfer
+                  - Credit Card
+                  - Cash 
+                  - PayPal
+                  - Direct Debit
+
+      - name: payment_status
+        description: Statut du paiement.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - SUCCESS
+                  - FAILED
+                  - PENDING
+
+      - name: transaction_reference
+        description: Référence unique de la transaction bancaire.
+
+      - name: bank_name
+        description: Banque ayant traité le paiement.
+
+      - name: currency
+        description: Devise utilisée pour le paiement.
+
+      ##########################################################################
+      # Indicateurs calculés
+      ##########################################################################
+
+      - name: is_successful_payment
+        description: Indique si le paiement a été effectué avec succès.
+
+      - name: is_pending_payment
+        description: Indique si le paiement est en attente.
+
+      - name: is_failed_payment
+        description: Indique si le paiement a échoué.
+
+      ##########################################################################
+      # Audit
+      ##########################################################################
+
+      - name: dbt_loaded_at
+        description: Date et heure de chargement du modèle par dbt.

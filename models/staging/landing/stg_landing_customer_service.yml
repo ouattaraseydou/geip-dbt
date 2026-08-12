@@ -1,0 +1,145 @@
+version: 2
+
+models:
+  - name: stg_landing_customer_service
+    description: >
+      ==========================================================================
+      STAGING MODEL : STG_LANDING_CUSTOMER_SERVICE
+      --------------------------------------------------------------------------
+      Ce modèle prépare les données des tickets du service client provenant de
+      la couche Landing.
+
+      Les traitements réalisés sont :
+        • nettoyage des champs texte
+        • standardisation des valeurs
+        • conversion des dates
+        • conversion des champs numériques
+        • création d'indicateurs techniques
+
+      Aucune logique métier complexe n'est appliquée à cette étape.
+
+      Cette table constitue la source des modèles Silver.
+      ==========================================================================
+
+    columns:
+
+      ##########################################################################
+      # Clés
+      ##########################################################################
+
+      - name: ticket_sk
+        description: Clé technique unique du ticket.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: ticket_id
+        description: Identifiant métier unique du ticket.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: customer_id
+        description: Identifiant du client ayant créé le ticket.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_landing_customers')
+                field: customer_id
+
+      - name: contract_id
+        description: Identifiant du contrat concerné par le ticket.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_landing_contracts')
+                field: contract_id
+
+      ##########################################################################
+      # Informations du ticket
+      ##########################################################################
+
+      - name: ticket_date
+        description: Date de création du ticket.
+
+      - name: ticket_type
+        description: Type de demande du client.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - INFORMATION REQUEST
+                  - NEW CONNECTION
+                  - TECHNICAL ISSUE
+                  - BILLING
+                  - OUTAGE
+                  - COMPLAINT
+                  - MOVE REQUEST
+
+      - name: priority
+        description: Niveau de priorité du ticket.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - LOW
+                  - MEDIUM
+                  - HIGH
+                  - CRITICAL
+
+      - name: channel
+        description: Canal utilisé pour créer le ticket.
+
+      - name: status
+        description: Statut actuel du ticket.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - OPEN
+                  - IN PROGRESS
+                  - RESOLVED
+
+      - name: assigned_team
+        description: Équipe responsable du traitement du ticket.
+
+      ##########################################################################
+      # Mesures
+      ##########################################################################
+
+      - name: resolution_time_hours
+        description: Temps de résolution du ticket en heures.
+
+      - name: satisfaction_score
+        description: Note de satisfaction donnée par le client.
+
+      ##########################################################################
+      # Indicateurs
+      ##########################################################################
+
+      - name: first_call_resolution
+        description: Indique si le ticket a été résolu dès le premier contact.
+
+      - name: is_resolved
+        description: Indique si le ticket est résolu.
+
+      - name: is_open
+        description: Indique si le ticket est ouvert.
+
+      - name: is_in_progress
+        description: Indique si le ticket est en cours de traitement.
+
+      - name: is_high_priority
+        description: Indique si le ticket est de priorité HIGH ou CRITICAL.
+
+      - name: resolved_within_24h
+        description: Indique si le ticket a été résolu en moins de 24 heures.
+
+      ##########################################################################
+      # Audit
+      ##########################################################################
+
+      - name: dbt_loaded_at
+        description: Date et heure de chargement du modèle par dbt.

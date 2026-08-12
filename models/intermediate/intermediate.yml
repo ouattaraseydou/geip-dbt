@@ -1,0 +1,207 @@
+version: 2
+
+models:
+
+  ##########################################################################
+  # INT_CUSTOMER_CONTRACTS
+  ##########################################################################
+
+  - name: int_customer_contracts
+    description: >
+      Table intermédiaire associant les clients à leurs contrats.
+      Elle constitue une étape de préparation avant la création des dimensions
+      et des tables de faits.
+
+    columns:
+
+      - name: customer_sk
+        description: Clé technique du client.
+        data_tests:
+          - not_null
+
+      - name: customer_id
+        description: Identifiant métier du client.
+        data_tests:
+          - not_null
+
+      - name: contract_sk
+        description: Clé technique du contrat.
+
+      - name: contract_id
+        description: Identifiant métier du contrat.
+
+  ##########################################################################
+  # INT_CONTRACT_METERS
+  ##########################################################################
+
+  - name: int_contract_meters
+    description: >
+      Table intermédiaire associant les contrats aux compteurs.
+
+    columns:
+
+      - name: contract_sk
+        description: Clé technique du contrat.
+        data_tests:
+          - not_null
+
+      - name: contract_id
+        description: Identifiant métier du contrat.
+        data_tests:
+          - not_null
+
+      - name: meter_sk
+        description: Clé technique du compteur.
+
+      - name: meter_id
+        description: Identifiant métier du compteur.
+
+  ##########################################################################
+  # INT_METER_CONSUMPTION
+  ##########################################################################
+
+  - name: int_meter_consumption
+    description: >
+      Table intermédiaire associant les relevés de consommation
+      aux compteurs et aux contrats.
+
+    columns:
+
+      - name: consumption_sk
+        description: Clé technique du relevé.
+        data_tests:
+          - not_null
+
+      - name: meter_id
+        description: Identifiant métier du compteur.
+        data_tests:
+          - not_null
+
+      - name: contract_id
+        description: Identifiant métier du contrat.
+        data_tests:
+          - not_null
+
+  ##########################################################################
+  # INT_INVOICE_PAYMENTS
+  ##########################################################################
+
+  - name: int_invoice_payments
+    description: >
+      Table intermédiaire reliant les paiements aux factures.
+
+    columns:
+
+      - name: invoice_sk
+        description: Clé technique de la facture.
+        data_tests:
+          - not_null
+
+      - name: invoice_id
+        description: Identifiant métier de la facture.
+        data_tests:
+          - not_null
+
+      - name: contract_id
+        description: Identifiant métier du contrat.
+        data_tests:
+          - not_null
+
+      - name: payment_id
+        description: Identifiant métier du paiement.
+
+  ##########################################################################
+  # INT_CUSTOMER_SERVICE
+  ##########################################################################
+
+  - name: int_customer_service
+    description: >
+      Table intermédiaire reliant les tickets du service client
+      aux contrats et aux clients.
+
+    columns:
+
+      - name: ticket_sk
+        description: Clé technique du ticket.
+        data_tests:
+          - not_null
+
+      - name: ticket_id
+        description: Identifiant métier du ticket.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: customer_id
+        description: Identifiant métier du client.
+        data_tests:
+          - not_null
+
+      - name: contract_id
+        description: Identifiant métier du contrat.
+        data_tests:
+          - not_null
+
+  ##########################################################################
+  # INT_OUTAGES
+  ##########################################################################
+
+  - name: int_outages
+    description: >
+      Table intermédiaire reliant les pannes réseau
+      aux contrats et aux compteurs.
+
+    columns:
+
+      - name: outage_sk
+        description: Clé technique de la panne.
+        data_tests:
+          - not_null
+
+      - name: outage_id
+        description: Identifiant métier de la panne.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: contract_id
+        description: Identifiant métier du contrat.
+        data_tests:
+          - not_null
+
+      - name: meter_id
+        description: Identifiant métier du compteur.
+        data_tests:
+          - not_null
+
+  ##########################################################################
+  # INT_MAINTENANCE
+  ##########################################################################
+
+  - name: int_maintenance
+    description: >
+      Table intermédiaire reliant les opérations de maintenance
+      aux contrats et aux compteurs.
+
+    columns:
+
+      - name: maintenance_sk
+        description: Clé technique de l'intervention.
+        data_tests:
+          - not_null
+
+      - name: maintenance_id
+        description: Identifiant métier de l'intervention.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: contract_id
+        description: Identifiant métier du contrat.
+        data_tests:
+          - not_null
+
+      - name: meter_id
+        description: Identifiant métier du compteur.
+        data_tests:
+          - not_null

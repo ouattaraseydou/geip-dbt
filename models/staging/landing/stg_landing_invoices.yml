@@ -1,0 +1,113 @@
+version: 2
+
+models:
+  - name: stg_landing_invoices
+    description: >
+      ==========================================================================
+      STAGING MODEL : STG_LANDING_INVOICES
+      --------------------------------------------------------------------------
+      Ce modèle prépare les données des factures provenant de la couche Landing.
+
+      Les traitements réalisés sont :
+        • nettoyage des champs texte
+        • standardisation des valeurs
+        • conversion des dates
+        • conversion des montants
+        • création d'indicateurs techniques
+
+      Aucune logique métier complexe n'est appliquée à cette étape.
+
+      Cette table constitue la source des modèles Silver.
+      ==========================================================================
+
+    columns:
+
+      ##########################################################################
+      # Clés
+      ##########################################################################
+
+      - name: invoice_sk
+        description: Clé technique unique de la facture.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: invoice_id
+        description: Identifiant métier unique de la facture.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: contract_id
+        description: Identifiant métier du contrat associé.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_landing_contracts')
+                field: contract_id
+
+      - name: meter_id
+        description: Identifiant métier du compteur associé.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_landing_meters')
+                field: meter_id
+
+      ##########################################################################
+      # Dates
+      ##########################################################################
+
+      - name: invoice_date
+        description: Date d'émission de la facture.
+
+      - name: billing_period_start
+        description: Date de début de la période de facturation.
+
+      - name: billing_period_end
+        description: Date de fin de la période de facturation.
+
+      - name: due_date
+        description: Date limite de paiement.
+
+      - name: payment_date
+        description: Date effective de paiement.
+
+      ##########################################################################
+      # Montants
+      ##########################################################################
+
+      - name: total_amount
+        description: Montant total TTC de la facture.
+
+      ##########################################################################
+      # Statut
+      ##########################################################################
+
+      - name: invoice_status
+        description: Statut actuel de la facture.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - PAID
+                  - UNPAID
+                  - OVERDUE
+
+      - name: payment_terms_days
+        description: Nombre de jours accordés au client pour régler la facture.
+
+      - name: payment_delay_days
+        description: Nombre de jours de retard de paiement.
+
+      - name: is_paid
+        description: Indique si la facture est entièrement réglée.
+
+      ##########################################################################
+      # Audit
+      ##########################################################################
+
+      - name: dbt_loaded_at
+        description: Date et heure de chargement du modèle par dbt.

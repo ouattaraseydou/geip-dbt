@@ -1,0 +1,146 @@
+version: 2
+
+models:
+  - name: stg_landing_contracts
+    description: >
+      ==========================================================================
+      STAGING MODEL : STG_LANDING_CONTRACTS
+      --------------------------------------------------------------------------
+      Ce modèle prépare les données des contrats provenant de la couche Landing.
+
+      Les traitements réalisés sont :
+        • suppression des doublons
+        • nettoyage des champs texte
+        • standardisation des valeurs
+        • conversion des dates
+        • conversion des montants numériques
+
+      Aucune logique métier n'est appliquée à cette étape.
+
+      Cette table constitue la source des modèles Silver.
+      ==========================================================================
+
+    columns:
+
+      ##########################################################################
+      # Clés
+      ##########################################################################
+
+      - name: contract_sk
+        description: Clé technique unique du contrat.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: contract_id
+        description: Identifiant métier unique du contrat.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: customer_id
+        description: Identifiant du client associé au contrat.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_landing_customers')
+                field: customer_id
+
+      ##########################################################################
+      # Informations contrat
+      ##########################################################################
+
+      - name: contract_type
+        description: Type du contrat.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - RESIDENTIAL
+                  - BUSINESS
+                  - ENTERPRISE
+
+      - name: energy_type
+        description: Type d'énergie fourni.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - ELECTRICITY
+                  - GAS
+                  - SOLAR
+                  - DUAL
+
+      - name: tariff_name
+        description: Nom de l'offre tarifaire.
+
+      - name: contract_status
+        description: Statut actuel du contrat.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - ACTIVE
+                  - SUSPENDED
+                  - TERMINATED
+
+      ##########################################################################
+      # Dates
+      ##########################################################################
+
+      - name: start_date
+        description: Date de début du contrat.
+
+      - name: end_date
+        description: Date de fin du contrat.
+
+      ##########################################################################
+      # Informations financières
+      ##########################################################################
+
+      - name: monthly_fee
+        description: Montant mensuel de l'abonnement.
+
+      - name: estimated_annual_consumption
+        description: Consommation annuelle estimée (kWh).
+
+      ##########################################################################
+      # Paiement
+      ##########################################################################
+
+      - name: renewable_energy
+        description: Indique si le contrat est basé sur une énergie renouvelable.
+
+      - name: payment_frequency
+        description: Fréquence de paiement.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - MONTHLY
+                  - QUARTERLY
+                  - YEARLY
+
+      - name: payment_method
+        description: Moyen de paiement utilisé.
+
+      ##########################################################################
+      # Fournisseur
+      ##########################################################################
+
+      - name: supplier_name
+        description: Fournisseur d'énergie.
+
+      - name: country
+        description: Pays associé au contrat.
+
+      ##########################################################################
+      # Audit
+      ##########################################################################
+
+      - name: created_at
+        description: Date de création du contrat.
+
+      - name: updated_at
+        description: Date de dernière mise à jour du contrat.

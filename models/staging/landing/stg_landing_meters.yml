@@ -1,0 +1,125 @@
+version: 2
+
+models:
+  - name: stg_landing_meters
+    description: >
+      ==========================================================================
+      STAGING MODEL : STG_LANDING_METERS
+      --------------------------------------------------------------------------
+      Ce modèle prépare les données des compteurs provenant de la couche Landing.
+
+      Les traitements réalisés sont :
+        • suppression des doublons
+        • nettoyage des champs texte
+        • standardisation des valeurs
+        • conversion des dates
+        • conversion des valeurs numériques
+
+      Aucune logique métier complexe n'est appliquée à cette étape.
+
+      Cette table constitue la source des modèles Silver.
+      ==========================================================================
+
+    columns:
+
+      ##########################################################################
+      # Clés
+      ##########################################################################
+
+      - name: meter_sk
+        description: Clé technique unique du compteur.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: meter_id
+        description: Identifiant métier unique du compteur.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: contract_id
+        description: Identifiant métier du contrat associé.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_landing_contracts')
+                field: contract_id
+
+      ##########################################################################
+      # Informations compteur
+      ##########################################################################
+
+      - name: serial_number
+        description: Numéro de série du compteur.
+
+      - name: meter_type
+        description: Type du compteur.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - SMART
+                  - ANALOG
+                  - DIGITAL
+
+      - name: manufacturer
+        description: Fabricant du compteur.
+
+      - name: installation_date
+        description: Date d'installation.
+
+      - name: last_calibration_date
+        description: Date de la dernière calibration.
+
+      - name: meter_status
+        description: Statut actuel du compteur.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - ACTIVE
+                  - FAULTY
+                  - INACTIVE
+
+      - name: voltage
+        description: Tension nominale.
+
+      - name: phase
+        description: Nombre de phases électriques.
+
+      - name: max_power_kw
+        description: Puissance maximale supportée (kW).
+
+      - name: communication_type
+        description: Technologie de communication.
+
+      - name: country
+        description: Pays d'installation.
+
+      - name: latitude
+        description: Latitude géographique.
+
+      - name: longitude
+        description: Longitude géographique.
+
+      ##########################################################################
+      # Audit
+      ##########################################################################
+
+      - name: created_at
+        description: Date de création dans le système source.
+
+      - name: updated_at
+        description: Date de dernière mise à jour dans le système source.
+
+      ##########################################################################
+      # Colonnes calculées
+      ##########################################################################
+
+      - name: is_active
+        description: Indique si le compteur est actif.
+
+      - name: dbt_loaded_at
+        description: Date et heure de chargement du modèle par dbt.

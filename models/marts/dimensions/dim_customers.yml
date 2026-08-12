@@ -1,0 +1,144 @@
+version: 2
+
+models:
+
+  # ===========================================================================
+  # DIM_CUSTOMERS
+  # ===========================================================================
+
+  - name: dim_customers
+
+    description: >
+      Customer dimension.
+      Contains one record per customer and stores descriptive customer
+      attributes used for reporting and analytics.
+
+    columns:
+
+      # =======================================================================
+      # Keys
+      # =======================================================================
+
+      - name: customer_sk
+        description: Surrogate key of the customer.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: customer_id
+        description: Business identifier of the customer.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: customer_code
+        description: Internal business code identifying the customer.
+
+      # =======================================================================
+      # Calendar Keys
+      # =======================================================================
+
+      - name: customer_birth_date_sk
+        description: Surrogate key of the customer birth date.
+
+      - name: customer_registration_date_sk
+        description: Surrogate key of the customer registration date.
+
+      - name: customer_created_date_sk
+        description: Surrogate key of the customer creation date.
+
+      # =======================================================================
+      # Personal Information
+      # =======================================================================
+
+      - name: civility
+        description: Customer title.
+
+      - name: first_name
+        description: Customer first name.
+
+      - name: middle_name
+        description: Customer middle name.
+
+      - name: last_name
+        description: Customer last name.
+
+      - name: gender
+        description: Customer gender.
+
+      - name: birth_date
+        description: Customer date of birth.
+
+      - name: nationality
+        description: Customer nationality.
+
+      - name: marital_status
+        description: Customer marital status.
+
+      # =======================================================================
+      # Contact Information
+      # =======================================================================
+
+      - name: customer_email
+        description: Primary customer email address.
+
+      - name: customer_mobile_phone
+        description: Customer mobile phone number.
+
+      # =======================================================================
+      # Address
+      # =======================================================================
+
+      - name: customer_city
+        description: Customer city.
+
+      - name: customer_region
+        description: Customer administrative region.
+
+      - name: customer_country
+        description: Customer country.
+
+      # =======================================================================
+      # Customer Profile
+      # =======================================================================
+
+      - name: customer_type
+        description: Customer category.
+
+      - name: customer_segment
+        description: Customer segment.
+
+      - name: loyalty_level
+        description: Customer loyalty level.
+
+      - name: annual_income
+        description: Estimated annual income.
+
+      - name: occupation
+        description: Customer occupation.
+
+      # =======================================================================
+      # Business Information
+      # =======================================================================
+
+      - name: customer_registration_date
+        description: Customer registration date.
+
+      - name: customer_status
+        description: Current customer status.
+
+      - name: risk_score
+        description: Customer risk score.
+
+      - name: acquisition_channel
+        description: Customer acquisition channel.
+
+      - name: customer_lifetime_value
+        description: Estimated customer lifetime value.
+
+      # =======================================================================
+      # Audit Information
+      # =======================================================================
+
+      - name: customer_created_at
+        description: Customer creation timestamp.
