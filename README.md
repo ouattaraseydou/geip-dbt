@@ -204,6 +204,7 @@ Snowflake constitue le Data Warehouse Cloud du projet GEIP.
 Il permet de centraliser les données et de stocker les différentes couches du modèle analytique.
 
 🏗️ Organisation des données
+---
 GEIP_PROD
 │
 ├── LANDING
@@ -220,4 +221,4 @@ GEIP_PROD
 
 Snowflake constitue ainsi la couche centrale entre les données sources et les outils de transformation et de Business Intelligence.
 
----
+
