@@ -196,3 +196,28 @@ AWS S3 permet de :
 🚧 Statut : l'intégration complète AWS S3 → Snowflake constitue une étape d'évolution du projet.
 
 ---
+
+# ❄️ Snowflake — Data Warehouse
+
+Snowflake constitue le Data Warehouse Cloud du projet GEIP.
+
+Il permet de centraliser les données et de stocker les différentes couches du modèle analytique.
+
+🏗️ Organisation des données
+GEIP_PROD
+│
+├── LANDING
+│
+├── STAGING
+│
+├── INTERMEDIATE
+│
+└── GOLD
+    │
+    ├── DIMENSIONS
+    ├── FACTS
+    └── REPORTING
+
+Snowflake constitue ainsi la couche centrale entre les données sources et les outils de transformation et de Business Intelligence.
+
+---
