@@ -170,7 +170,7 @@ L'objectif est de centraliser les données brutes dans un environnement **Data L
 
 ## 📂 Organisation des données
 
-```text
+```
 AWS S3
 │
 ├── 📁 customers/
@@ -181,4 +181,18 @@ AWS S3
 ├── 📁 energy_consumption/
 ├── 📁 outages/
 └── 📁 maintenance/
-```text
+```
+
+🎯 Rôle de S3
+
+AWS S3 permet de :
+
+📦 stocker les données sources ;
+🗂️ organiser les données par domaine métier ;
+🔄 conserver les données brutes avant transformation ;
+☁️ fournir une couche de stockage scalable ;
+🔗 alimenter le pipeline Data Engineering.
+
+🚧 Statut : l'intégration complète AWS S3 → Snowflake constitue une étape d'évolution du projet.
+
+---
