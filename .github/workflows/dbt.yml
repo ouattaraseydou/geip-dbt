@@ -1,6 +1,7 @@
 name: GEIP dbt
 
 on:
+
   # ============================================================
   # Déclenchement à chaque push sur main
   # ============================================================
@@ -61,6 +62,7 @@ jobs:
       # ==========================================================
 
       - name: Create dbt profile
+
         env:
           SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
           SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
@@ -126,10 +128,93 @@ jobs:
       # ==========================================================
       # 7. Construction complète du Data Warehouse
       # ==========================================================
-      # --full-refresh :
-      # Reconstruit complètement les modèles incremental
-      # ==========================================================
 
       - name: dbt build full refresh
         run: |
           dbt build --target dev --full-refresh
+
+
+      # ==========================================================
+      # 8. ENVOI DU RAPPORT PAR EMAIL
+      # ==========================================================
+
+      - name: Send email report
+
+        if: ${{ always() }}
+
+        uses: dawidd6/action-send-mail@v18
+
+        with:
+
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+
+          subject: "GEIP DBT - Rapport quotidien - ${{ job.status }}"
+
+          to: ouattsahid@gmail.com
+
+          from: "GEIP Data Pipeline <ouattsahid@gmail.com>"
+
+          body: |
+
+            ==========================================
+            GEIP DATA PIPELINE
+            ==========================================
+
+            Bonjour,
+
+            Voici le résultat de l'exécution automatique
+            du pipeline dbt GEIP.
+
+            ------------------------------------------
+            STATUT
+            ------------------------------------------
+
+            Statut du workflow :
+            ${{ job.status }}
+
+            ------------------------------------------
+            INFORMATIONS
+            ------------------------------------------
+
+            Projet :
+            ${{ github.repository }}
+
+            Branche :
+            ${{ github.ref_name }}
+
+            Déclenchement :
+            ${{ github.event_name }}
+
+            Commit :
+            ${{ github.sha }}
+
+            ------------------------------------------
+            COMMANDE EXECUTÉE
+            ------------------------------------------
+
+            dbt build --target dev --full-refresh
+
+            ------------------------------------------
+            RESULTAT
+            ------------------------------------------
+
+            Si le statut est "success" :
+            le pipeline dbt s'est terminé correctement.
+
+            Si le statut est "failure" :
+            une étape du pipeline a rencontré une erreur.
+
+            ------------------------------------------
+            LOGS GITHUB ACTIONS
+            ------------------------------------------
+
+            ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            ==========================================
+            GEIP - DATA ENGINEERING
+            ==========================================
