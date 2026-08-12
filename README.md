@@ -105,26 +105,7 @@ Ces données permettent de produire différents types d'analyses :
 ---
 
 # 🏗️ Architecture globale
-# ☁️ AWS S3 — Data Lake
 
-**Amazon S3** constitue la couche de stockage des données sources du projet.
-
-L'objectif est de centraliser les données brutes dans un environnement **Data Lake** avant leur intégration dans **Snowflake**.
-
-## 📂 Organisation des données
-
-```text
-AWS S3
-│
-├── 📁 customers/
-├── 📁 contracts/
-├── 📁 meters/
-├── 📁 invoices/
-├── 📁 payments/
-├── 📁 energy_consumption/
-├── 📁 outages/
-└── 📁 maintenance/
-```text
                          ┌──────────────────────┐
                          │        AWS S3        │
                          │      DATA LAKE       │
@@ -180,3 +161,24 @@ AWS S3
                          └──────────────────────┘
 
 
+---
+# ☁️ AWS S3 — Data Lake
+
+**Amazon S3** constitue la couche de stockage des données sources du projet.
+
+L'objectif est de centraliser les données brutes dans un environnement **Data Lake** avant leur intégration dans **Snowflake**.
+
+## 📂 Organisation des données
+
+```text
+AWS S3
+│
+├── 📁 customers/
+├── 📁 contracts/
+├── 📁 meters/
+├── 📁 invoices/
+├── 📁 payments/
+├── 📁 energy_consumption/
+├── 📁 outages/
+└── 📁 maintenance/
+```text
