@@ -203,22 +203,78 @@ Snowflake constitue le Data Warehouse Cloud du projet GEIP.
 
 Il permet de centraliser les données et de stocker les différentes couches du modèle analytique.
 
-🏗️ Organisation des données
----
+## ❄️ Organisation du Data Warehouse
+
+La base **GEIP_PROD** est organisée en plusieurs couches afin de séparer les données selon leur niveau de transformation.
+
+```text
 GEIP_PROD
 │
-├── LANDING
+├── 📁 LANDING
+│   └── Données sources brutes
 │
-├── STAGING
+├── 📁 STAGING
+│   └── Nettoyage et standardisation
 │
-├── INTERMEDIATE
+├── 📁 INTERMEDIATE
+│   └── Transformations et jointures métier
 │
-└── GOLD
+└── 📁 GOLD
     │
-    ├── DIMENSIONS
-    ├── FACTS
-    └── REPORTING
+    ├── 📁 DIMENSIONS
+    │   └── Données descriptives
+    │
+    ├── 📁 FACTS
+    │   └── Données transactionnelles et mesures
+    │
+    └── 📁 REPORTING
+        └── Modèles destinés à Power BI
+```
 
-Snowflake constitue ainsi la couche centrale entre les données sources et les outils de transformation et de Business Intelligence.
+### 🔄 Flux de transformation
 
+```text
+┌──────────────┐
+│   LANDING    │
+│  Données RAW │
+└──────┬───────┘
+       │
+       ▼
+┌──────────────┐
+│   STAGING    │
+│ Nettoyage    │
+│ Standardisation│
+└──────┬───────┘
+       │
+       ▼
+┌──────────────┐
+│ INTERMEDIATE │
+│ Jointures    │
+│ Logique métier│
+└──────┬───────┘
+       │
+       ▼
+┌────────────────────────────┐
+│            GOLD            │
+│                            │
+│  DIMENSIONS │ FACTS │ RPT  │
+└─────────────┬──────────────┘
+              │
+              ▼
+       ┌──────────────┐
+       │   POWER BI   │
+       │  Dashboards  │
+       └──────────────┘
+```
 
+### 📌 Rôle des différentes couches
+
+| Couche | Rôle |
+|---|---|
+| 🟤 **LANDING** | Stockage des données sources brutes |
+| 🥉 **STAGING** | Nettoyage, typage et standardisation |
+| 🥈 **INTERMEDIATE** | Jointures et transformations métier |
+| 🥇 **GOLD** | Données analytiques finales |
+| 📐 **DIMENSIONS** | Contexte descriptif |
+| 📊 **FACTS** | Mesures et événements métier |
+| 📈 **REPORTING** | Données préparées pour Power BI |
