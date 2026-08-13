@@ -2,13 +2,21 @@
 
 <p align="center">
 
-**End-to-End Data Engineering & Business Intelligence Platform**
+  <img src="https://img.shields.io/badge/AWS%20S3-Data%20Lake-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white" alt="AWS S3"/>
+
+  <img src="https://img.shields.io/badge/Snowflake-Data%20Warehouse-29B5E8?style=for-the-badge&logo=snowflake&logoColor=white" alt="Snowflake"/>
+
+  <img src="https://img.shields.io/badge/dbt-Analytics%20Engineering-FF694B?style=for-the-badge&logo=dbt&logoColor=white" alt="dbt"/>
+
+  <img src="https://img.shields.io/badge/Power%20BI-Business%20Intelligence-F2C811?style=for-the-badge&logo=powerbi&logoColor=black" alt="Power BI"/>
+
+  <img src="https://img.shields.io/badge/GitHub%20Actions-CI%2FCD-2088FF?style=for-the-badge&logo=githubactions&logoColor=white" alt="GitHub Actions"/>
 
 </p>
 
 <p align="center">
 
-AWS S3 • Snowflake • dbt • SQL • Python • GitHub Actions • Power BI
+**End-to-End Data Engineering & Business Intelligence Platform**
 
 </p>
 
@@ -16,91 +24,55 @@ AWS S3 • Snowflake • dbt • SQL • Python • GitHub Actions • Power BI
 
 ## 📌 Présentation du projet
 
-**GEIP** est un projet **End-to-End Data Engineering & Business Intelligence** visant à concevoir une plateforme de données dédiée à l'analyse d'un environnement énergétique.
+**GEIP** est un projet **End-to-End Data Engineering & Business Intelligence** visant à construire une plateforme de données dédiée à l'analyse d'un environnement énergétique.
 
-L'objectif du projet est de transformer des données brutes en données fiables, structurées et exploitables pour les analyses métier, le reporting et la visualisation des indicateurs.
-
-L'architecture du projet s'appuie sur plusieurs technologies Cloud et Data :
+Le projet couvre l'ensemble de la chaîne de traitement de la donnée :
 
 **AWS S3 → Snowflake → dbt → Data Warehouse → Power BI**
 
-Le projet intègre également une démarche d'industrialisation et d'automatisation avec **GitHub Actions**.
+L'objectif est de transformer des données brutes en données fiables, structurées et exploitables pour les analyses métier et la visualisation des indicateurs.
+
+Le projet met également en œuvre une véritable démarche d'industrialisation avec :
+
+- transformation des données avec **dbt** ;
+- modélisation en couches **Staging / Intermediate / Gold** ;
+- modèles incrémentaux ;
+- snapshots pour l'historisation ;
+- tests automatisés de qualité des données ;
+- CI/CD avec **GitHub Actions** ;
+- exécution automatique quotidienne ;
+- gestion sécurisée des credentials avec **GitHub Secrets** ;
+- génération automatique d'un rapport par e-mail ;
+- préparation des données pour **Power BI**.
 
 ---
 
-# 🎯 Objectifs du projet
+# 🎯 Objectifs métier
 
-Le projet GEIP a pour objectifs de :
+La plateforme permet de centraliser et d'analyser différentes données liées à l'activité énergétique.
 
-- centraliser les données énergétiques ;
-- stocker les données sources dans un environnement Data Lake ;
-- intégrer les données dans Snowflake ;
-- nettoyer et standardiser les données ;
-- construire un Data Warehouse analytique ;
-- mettre en place une architecture **Staging / Intermediate / Gold** ;
-- développer des dimensions et des tables de faits ;
-- historiser certaines données métier ;
-- mettre en place des modèles incrémentaux ;
-- automatiser les contrôles de qualité des données ;
-- industrialiser les transformations avec dbt ;
-- automatiser l'exécution du pipeline avec GitHub Actions ;
-- préparer les données pour Power BI ;
-- produire des tableaux de bord et indicateurs métier.
+Les principales entités métier sont :
 
----
+- 👤 Clients
+- 📄 Contrats
+- ⚡ Compteurs
+- 🔋 Consommation énergétique
+- 🧾 Factures
+- 💳 Paiements
+- 🚨 Incidents / coupures
+- 🔧 Maintenance
 
-# 🏢 Contexte métier
+Ces données permettent notamment de produire des analyses concernant :
 
-GEIP est conçu comme une plateforme analytique permettant de centraliser différentes données liées à l'activité énergétique.
-
-Les principales entités métier du projet sont :
-
-- 👤 **Clients**
-- 📄 **Contrats**
-- ⚡ **Compteurs**
-- 🔋 **Consommation énergétique**
-- 🧾 **Factures**
-- 💳 **Paiements**
-- 🚨 **Incidents / Coupures**
-- 🔧 **Maintenance**
-
-Ces données permettent de produire différents types d'analyses :
-
-### 👥 Analyse clients
-
-- nombre de clients ;
-- segmentation ;
-- évolution du portefeuille client ;
-- analyse des caractéristiques clients.
-
-### 📄 Analyse contrats
-
-- nombre de contrats ;
-- statut des contrats ;
-- évolution des contrats ;
-- analyse de la relation client / contrat.
-
-### ⚡ Analyse énergétique
-
-- consommation énergétique ;
-- évolution de la consommation ;
-- analyse par compteur ;
-- analyse temporelle.
-
-### 💰 Analyse financière
-
-- facturation ;
-- paiements ;
-- montants dus ;
-- suivi des règlements ;
-- indicateurs financiers.
-
-### 🚨 Analyse opérationnelle
-
-- incidents ;
-- coupures ;
-- maintenance ;
-- suivi des événements opérationnels.
+- les clients ;
+- les contrats ;
+- la consommation énergétique ;
+- les factures ;
+- les paiements ;
+- les incidents ;
+- la maintenance ;
+- les indicateurs financiers ;
+- les indicateurs opérationnels.
 
 ---
 
@@ -125,7 +97,7 @@ Ces données permettent de produire différents types d'analyses :
                                     ▼
                     ┌───────────────────────────────┐
                     │              dbt               │
-                    │       Transformation ELT       │
+                    │      Transformation ELT        │
                     └──────────────┬────────────────┘
                                    │
                  ┌─────────────────┼─────────────────┐
@@ -156,7 +128,7 @@ Ces données permettent de produire différents types d'analyses :
                          │ dbt debug            │
                          │ dbt deps             │
                          │ dbt build            │
-                         │ Data Tests           │
+                         │ Data Tests            │
                          │ Full Refresh         │
                          │ Email Reporting      │
                          └──────────────────────┘
