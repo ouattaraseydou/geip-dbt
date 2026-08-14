@@ -18,7 +18,11 @@
 
 <p align="center">
   <a href="https://github.com/ouattaraseydou/geip-dbt">
-    <img src="https://img.shields.io/badge/GitHub-View%20Repository-181717?style=flat-square&logo=github" alt="GitHub Repository">
+    <img src="https://img.shields.io/badge/GitHub-View%20Repository-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Repository">
+  </a>
+
+  <a href="https://ouattaraseydou.github.io/geip-dbt/">
+    <img src="https://img.shields.io/badge/📚%20dbt-Documentation-FF694B?style=for-the-badge" alt="dbt Documentation">
   </a>
 </p>
 
@@ -36,6 +40,7 @@
 
 - [☁️ AWS S3 — Data Lake](#️-1-aws-s3--data-lake)
 - [❄️ Snowflake — Data Warehouse](#️-2-snowflake--data-warehouse)
+- [🗂️ Scripts Snowflake](#-scripts-snowflake)
 
 ### 🔧 Transformation & Modélisation
 
@@ -64,6 +69,7 @@
 
 ### 📚 Documentation
 
+- [📚 Documentation dbt](#-documentation-dbt)
 - [📁 Structure du projet](#-19-structure-du-projet)
 - [🛠️ Technologies utilisées](#️-20-technologies-utilisées)
 - [🚀 Commandes principales](#-21-commandes-principales)
@@ -278,7 +284,7 @@ AWS S3 permet de :
 - ☁️ bénéficier d'un stockage cloud scalable ;
 - 🔗 préparer l'alimentation du pipeline Data.
 
-> 🚧 **Statut :** l'intégration complète **AWS S3 → Snowflake** constitue une étape d'évolution du projet.
+> ✅ **Statut :** la chaîne **AWS S3 → Snowflake** est documentée dans le repository avec les scripts de format CSV, stage, chargement et vérification. Les credentials AWS ne sont pas versionnés dans le code.
 
 ---
 
@@ -317,29 +323,77 @@ GEIP_PROD
 ## 🔄 Flux de transformation
 
 ```text
-LANDING
+AWS S3
    │
    ▼
-STAGING
+Snowflake
    │
-   ├── Nettoyage
-   ├── Standardisation
-   └── Typage
-   │
-   ▼
-INTERMEDIATE
-   │
-   ├── Jointures
-   ├── Enrichissement
-   └── Règles métier
-   │
-   ▼
-GOLD
-   │
-   ├── DIMENSIONS
-   ├── FACTS
-   └── REPORTING
+   ├── Storage / Stage
+   └── LANDING
+        │
+        ▼
+      dbt
+        │
+        ├── STAGING
+        ├── INTERMEDIATE
+        └── GOLD
+              │
+              ├── DIMENSIONS
+              ├── FACTS
+              └── REPORTING
 ```
+
+## 🔗 Scripts Snowflake
+
+Les scripts d'administration, d'ingestion, de chargement et d'analyse SQL sont disponibles dans le repository :
+
+```text
+snowflake/
+│
+├── 1-Administration base/
+│   ├── Administration.sql
+│   ├── 01_create_roles.sql
+│   ├── 02_create_warehouses.sql
+│   ├── 03_create_database.sql
+│   ├── 04_create_schemas.sql
+│   ├── 05_grant_permissions.sql
+│   ├── 06_create_users.sql
+│   ├── 07_assign_roles.sql
+│   ├── 08_validation.sql
+│   └── 09_cleanup.sql
+│
+├── 2-landing/
+│   ├── customers.sql
+│   ├── contracts.sql
+│   ├── meters.sql
+│   ├── energy_consumption.sql
+│   ├── invoices.sql
+│   ├── payments.sql
+│   ├── customer_service.sql
+│   ├── outages.sql
+│   └── maintenance.sql
+│
+├── 3-Storage Integration/
+│   ├── 1-File Format.sql
+│   └── 2-Creer Stage.sql
+│
+├── 4-Chargement des tables/
+│   ├── table_landing.sql
+│   └── verification table.sql
+│
+└── 5-sql_analysis Landing/
+    ├── 01_customers_analysis.sql
+    ├── 02_contracts_analysis.sql
+    ├── 03_meters_analysis.sql
+    ├── 04_energy_consumption_analysis.sql
+    ├── 05_invoices_analysis.sql
+    ├── 06_payments_analysis.sql
+    ├── 07_customer_service_analysis.sql
+    ├── 08_outages_analysis.sql
+    └── 09_maintenance_analysis.sql
+```
+
+👉 [Voir tous les scripts Snowflake](./snowflake/)
 
 ---
 
@@ -1002,6 +1056,33 @@ GitHub Actions
 
 ---
 
+# 📚 Documentation dbt
+
+La documentation technique du projet est générée automatiquement avec dbt et publiée avec **GitHub Pages**.
+
+<p align="center">
+  <a href="https://ouattaraseydou.github.io/geip-dbt/">
+    <img src="https://img.shields.io/badge/📚%20Ouvrir%20la%20documentation%20dbt-FF694B?style=for-the-badge" alt="Ouvrir la documentation dbt">
+  </a>
+</p>
+
+### 📊 Contenu documenté
+
+| Élément | Volume |
+|---|---:|
+| 🧱 Modèles | **30** |
+| 📡 Sources | **9** |
+| 🧪 Tests | **190** |
+| 📸 Snapshots | **4** |
+| 📊 Analyses | **1** |
+| 🧩 Macros | **1 064** |
+
+👉 [Ouvrir la documentation dbt](https://ouattaraseydou.github.io/geip-dbt/)
+
+Le dossier [`docs/`](./docs/) contient la page d'accès à la documentation et la version statique générée.
+
+---
+
 # 📁 19. Structure du projet
 
 ```text
@@ -1010,6 +1091,17 @@ geip-dbt/
 ├── .github/
 │   └── workflows/
 │       └── dbt.yml
+│
+├── aws/
+│   └── s3/
+│       └── README.md
+│
+├── snowflake/
+│   ├── 1-Administration base/
+│   ├── 2-landing/
+│   ├── 3-Storage Integration/
+│   ├── 4-Chargement des tables/
+│   └── 5-sql_analysis Landing/
 │
 ├── analyses/
 │
@@ -1031,6 +1123,10 @@ geip-dbt/
 ├── seeds/
 ├── snapshots/
 ├── tests/
+│
+├── docs/
+│   ├── README.md
+│   └── index.html
 │
 ├── .gitignore
 ├── README.md
@@ -1132,6 +1228,12 @@ TOTAL=224
 | 🔁 REUSED | **0** |
 | 📊 TOTAL | **224** |
 
+### 📚 Documentation
+
+La documentation statique dbt a également été générée et publiée :
+
+👉 https://ouattaraseydou.github.io/geip-dbt/
+
 ### 🎯 Statut
 
 > 🟢 **PIPELINE SUCCESS — 224/224 éléments exécutés avec succès**
@@ -1142,13 +1244,14 @@ TOTAL=224
 
 ## 🚧 Évolutions prévues
 
-- [ ] ☁️ Finaliser l'intégration **AWS S3 → Snowflake**
-- [ ] 🔄 Automatiser l'ingestion depuis S3
-- [ ] ❄️ Optimiser les traitements Snowflake
+- [x] ☁️ Mettre en place et documenter l'intégration **AWS S3 → Snowflake**
+- [x] ❄️ Ajouter les scripts d'administration, de Landing, de chargement et d'analyse Snowflake
+- [x] 📚 Générer et publier la documentation dbt avec GitHub Pages
+- [x] ⚙️ Industrialiser les exécutions avec GitHub Actions
+- [x] 📧 Mettre en place le reporting automatique par e-mail
 - [ ] 🧪 Enrichir la Data Quality
-- [ ] 📚 Générer la documentation dbt
-- [ ] 📊 Finaliser les dashboards Power BI
-- [ ] 📈 Améliorer le monitoring
+- [ ] 📊 Finaliser / enrichir les dashboards Power BI
+- [ ] 📈 Approfondir le monitoring
 - [ ] 🌍 Mettre en place les environnements `dev`, `staging` et `prod`
 
 ---
@@ -1217,6 +1320,14 @@ ETL / ELT
 👉 <strong>
 <a href="https://github.com/ouattaraseydou/geip-dbt">
 github.com/ouattaraseydou/geip-dbt
+</a>
+</strong>
+
+<br><br>
+
+📚 <strong>
+<a href="https://ouattaraseydou.github.io/geip-dbt/">
+Documentation dbt
 </a>
 </strong>
 
